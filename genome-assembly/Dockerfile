@@ -22,7 +22,7 @@ RUN apt-get update && \
     apt-get install -y \
       spades trim-galore zlib1g-dev wget perl python-is-python3 python3 \
       python3-setuptools python3-matplotlib python3-simplejson python3-joblib \
-      python3-pip pkg-config libfreetype6-dev libpng-dev g++ make locales \
+      python3-pip pkg-config libfreetype6-dev libpng-dev g++ make locales && \
     locale-gen en_US.UTF-8 && \
     apt-get clean && \
     apt-get autoclean && \
