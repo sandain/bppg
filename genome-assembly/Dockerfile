@@ -23,7 +23,6 @@ RUN apt-get update && \
       spades trim-galore zlib1g-dev wget perl python-is-python3 python3 \
       python3-setuptools python3-matplotlib python3-simplejson python3-joblib \
       python3-pip pkg-config libfreetype6-dev libpng-dev g++ make locales \
-      sendmail && \
     locale-gen en_US.UTF-8 && \
     apt-get clean && \
     apt-get autoclean && \
@@ -68,7 +67,6 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'quast.py --glimmer -o output output/scaffolds.fasta\n' >> /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
-    printf 'printf "To: $EMAIL\\nSubject: JPL AWS Job complete\\n\\n%s\\n" $NAME | sendmail -t $EMAIL\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
 
 # Run the script on entry.
