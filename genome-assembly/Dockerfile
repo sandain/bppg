@@ -5,7 +5,7 @@
 #    docker run --entrypoint /bin/bash -v `pwd`:`pwd` -w `pwd` -it bppg/genome-assembly:latest
 
 # To run the app:
-#    docker run -v `pwd`:`pwd` -w `pwd` bppg/genome-assembly:latest <NAME> <R1> <R2> <EMAIL>
+#    docker run -v `pwd`:`pwd` -w `pwd` bppg/genome-assembly:latest <NAME> <R1> <R2>
 
 # This is the base image that we will work with.
 FROM ubuntu:20.04
@@ -43,7 +43,6 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'NAME=$1\n' >> /app/run.sh && \
     printf 'R1=$2\n' >> /app/run.sh && \
     printf 'R2=$3\n' >> /app/run.sh && \
-    printf 'EMAIL=$4\n' >> /app/run.sh && \
     printf 'if [ -z "$R1" ] || [ ! -s "$R1" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: R1 file $R1 not found!" >&2\n' >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
