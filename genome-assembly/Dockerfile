@@ -43,6 +43,10 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'NAME=$1\n' >> /app/run.sh && \
     printf 'R1=$2\n' >> /app/run.sh && \
     printf 'R2=$3\n' >> /app/run.sh && \
+    printf 'if [ -z "$NAME" ]; then\n' >> /app/run.sh && \
+    printf '  echo "Error: name not provided!" >&2\n' >> /app/run.sh && \
+    printf '  exit 1\n' >> /app/run.sh && \
+    printf 'fi\n' >> /app/run.sh && \
     printf 'if [ -z "$R1" ] || [ ! -s "$R1" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: R1 file $R1 not found!" >&2\n' >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
