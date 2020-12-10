@@ -55,9 +55,9 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'NAME=$1\n' >> /app/run.sh && \
     printf 'R1=$2\n' >> /app/run.sh && \
     printf 'R2=$3\n' >> /app/run.sh && \
-    printf 'TEST_RCLONE=$(rclone --config=%s config show genome-assembly 2>/dev/null | grep "type = drive")\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'TEST_RCLONE=$(rclone --config=%s config show bppg/genome-assembly 2>/dev/null | grep "type = drive")\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'if [ -z "$TEST_RCLONE" ]; then\n' >> /app/run.sh && \
-    printf '  echo "Error: rclone config for genome-assembly not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Error: rclone config for bppg/genome-assembly not found!" >&2\n' >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'if [ -z "$NAME" ]; then\n' >> /app/run.sh && \
@@ -87,7 +87,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'quast.py --glimmer -o output output/scaffolds.fasta\n' >> /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
-    printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'rclone --config=%s copy $NAME.tar.gz bppg/genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
 
