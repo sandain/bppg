@@ -4,14 +4,20 @@
 # To get a Bash shell:
 #    docker run --entrypoint /bin/bash -v `pwd`:`pwd` -w `pwd` -it bppg/genome-assembly:latest
 
-# To run the app:
+# To run the genome assembly:
 #    docker run -v `pwd`:`pwd` -w `pwd` bppg/genome-assembly:latest <NAME> <R1> <R2>
+#
+#    <NAME> The name of the genome
+#    <R1>, <R2> File names containing the short sequences to assemble.
+#
+#    R1 and R2 files must exist in the current working directory.
+#    A valid rclone.conf file must also exist in the current working directory.
 
 # This is the base image that we will work with.
 FROM ubuntu:20.04
 
 LABEL maintainer="jason.wood@jpl.nasa.gov"
-LABEL description="Run a genome assembly pipeline utilizing Trim-Galore, Spades, and Quast"
+LABEL description="Run a genome assembly pipeline utilizing Trim-Galore, SPAdes, and Quast"
 LABEL version="1.0"
 
 ARG QUAST_VER=5.1.0rc1
