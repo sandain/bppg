@@ -82,7 +82,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'quast.py --glimmer -o output output/scaffolds.fasta\n' >> /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
-    printf 'rm -Rf output $NAME.tar.gz\n' >> /app/run.sh && \
+    printf 'rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
 
 # Run the script on entry.
