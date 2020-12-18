@@ -58,18 +58,22 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'TEST_RCLONE=$(rclone --config=%s config show genome-assembly 2>/dev/null | grep "type = drive")\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'if [ -z "$TEST_RCLONE" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: rclone config for genome-assembly not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'if [ -z "$NAME" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: name not provided!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'if [ -z "$R1" ] || [ ! -s "$R1" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: R1 file $R1 not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'if [ -z "$R2" ] || [ ! -s "$R2" ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: R2 file $R2 not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'mkdir -p output\n' >> /app/run.sh && \
@@ -79,12 +83,14 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'R2_TRIMMED=output/$(basename $R2 .fastq.gz)_val_2.fq.gz\n' >> /app/run.sh && \
     printf 'if [ -z "$R1_TRIMMED" ] || [ -z "$R2_TRIMMED" ] || [ ! -s $R1_TRIMMED ] || [ ! -s $R2_TRIMMED ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: Trimmed R1 or R2 file not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'echo "Starting SPAdes" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'spades.py -1 $R1_TRIMMED -2 $R2_TRIMMED -o output\n' >> /app/run.sh && \
     printf 'if [ -z output/scaffolds.fasta ] || [ ! -s output/scaffolds.fasta ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: Scaffolds not found!" >&2\n' >> /app/run.sh && \
+    printf '  echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'echo "Starting Quast" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
