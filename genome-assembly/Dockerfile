@@ -80,7 +80,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
     printf 'mkdir -p output\n' >> /app/run.sh && \
-    printf 'echo "Starting Trim-Galore" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'echo "Running Trim-Galore" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'trim_galore -o output --paired $R1 $R2\n' >> /app/run.sh && \
     printf 'R1_TRIMMED=output/$(basename $R1 .fastq.gz)_val_1.fq.gz\n' >> /app/run.sh && \
     printf 'R2_TRIMMED=output/$(basename $R2 .fastq.gz)_val_2.fq.gz\n' >> /app/run.sh && \
@@ -90,7 +90,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf '  rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
-    printf 'echo "Starting SPAdes" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'echo "Running SPAdes" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'spades.py -1 $R1_TRIMMED -2 $R2_TRIMMED -o output\n' >> /app/run.sh && \
     printf 'if [ -z output/scaffolds.fasta ] || [ ! -s output/scaffolds.fasta ]; then\n' >> /app/run.sh && \
     printf '  echo "Error: Scaffolds not found!" >&2\n' >> /app/run.sh && \
@@ -98,7 +98,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf '  rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     printf '  exit 1\n' >> /app/run.sh && \
     printf 'fi\n' >> /app/run.sh && \
-    printf 'echo "Starting Quast" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'echo "Running Quast" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'quast.py --glimmer -o output output/scaffolds.fasta\n' >> /app/run.sh && \
     printf 'echo "Creating archive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
