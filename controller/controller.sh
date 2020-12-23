@@ -53,10 +53,13 @@ genome_assembly() {
 }
 
 # ---------------------------------------------------------------------------
-
+# Report the status of a job.
+#
+# @param 1 The job to query.
 # ---------------------------------------------------------------------------
 job_status() {
-  local TYPE STATUS
+  local JOB TYPE STATUS
+  JOB=$1
   TYPE=$(grep $JOB $JOBS_CONF | cut -f1)
   # Get the status of the job.
   STATUS=$(rclone --config=$RCLONE_CONF cat $TYPE:$JOB.status 2>/dev/null)
@@ -97,7 +100,7 @@ watch_jobs() {
       JOB=$(printf "$INSTANCE" | cut -f2 | cut -d: -f2)
       TYPE=$(grep $JOB $JOBS_CONF | cut -f1)
       # Get the status of the job.
-      STATUS=$(job_status)
+      STATUS=$(job_status $JOB)
       if [ "$STATUS" = "Done" ]; then
         # Remove the job from the queue.
         perl -i -ne "print unless (/$JOB/);" $JOBS_CONF
@@ -188,7 +191,7 @@ case "$COMMAND" in
     for JOB in $JOBS; do
       TYPE=$(grep $JOB $JOBS_CONF | cut -f1)
       # Get the status of the job.
-      STATUS=$(rclone --config=$RCLONE_CONF cat $TYPE:$JOB.status 2>/dev/null)
+      STATUS=$(job_status $JOB)
       if [ "$STATUS" = "" ]; then
         STATUS="Not Started"
       fi
