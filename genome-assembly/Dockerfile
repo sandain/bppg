@@ -105,7 +105,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'echo "Transfering results to GDrive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'perl -MBio::SeqIO -e '"'"'$in=Bio::SeqIO->new(-file=>"<output/scaffolds.fasta",-format=>"fasta");$out=Bio::SeqIO->new(-file=>">$NAME.filtered.fasta",-format=>"fasta");while($seq=$in->next_seq){$out->write_seq($seq)if(length $seq->seq>=500);}$in->close;$out->close;'"'"'\n' >> /app/run.sh && \
-    printf 'rclone --config=%s copy $NAME.filtered.fasta genome-assembly:$NAME.filtered.fasta\n' >> /app/run.sh && \
+    printf 'rclone --config=%s copy $NAME.filtered.fasta genome-assembly:\n' >> /app/run.sh && \
     printf 'echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
