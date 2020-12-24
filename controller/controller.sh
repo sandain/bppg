@@ -114,7 +114,7 @@ watch_jobs() {
     # Shutdown instances and end the watch_jobs process if there are no more jobs.
     if [ $(grep -v "^\s*#" $JOBS_CONF | grep -v -e "^$" | wc -l) -eq 0 ]; then
       grep -v "^\s*#" $INSTANCES_CONF | cut -f1 | while read -r INSTANCE; do
-        ssh -T -i $JPL_PEM ubuntu@$INSTANCE "shutdown now"
+        ssh -T -i $JPL_PEM ubuntu@$INSTANCE "sudo shutdown now"
         perl -i -ne "print unless (/$INSTANCE/);" $INSTANCES_CONF
       done
       RUNNING="false"
