@@ -27,7 +27,7 @@ ARG RCLONE_CONF=rclone.conf
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \
-      spades trim-galore zlib1g-dev wget perl python-is-python3 python3 \
+      spades trim-galore zlib1g-dev wget perl bioperl python-is-python3 python3 \
       python3-setuptools python3-matplotlib python3-simplejson python3-joblib \
       python3-pip pkg-config libfreetype6-dev libpng-dev g++ make locales && \
     locale-gen en_US.UTF-8 && \
@@ -104,6 +104,8 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
     printf 'echo "Transfering results to GDrive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'perl -MBio::SeqIO -e '"'"'$in=Bio::SeqIO->new(-file=>"<output/scaffolds.fasta",-format=>"fasta");$out=Bio::SeqIO->new(-file=>">$NAME.filtered.fasta",-format=>"fasta");while($seq=$in->next_seq){$out->write_seq($seq)if(length $seq->seq>=500);}$in->close;$out->close;'"'"'\n' >> /app/run.sh && \
+    printf 'rclone --config=%s copy $NAME.filtered.fasta genome-assembly:$NAME.filtered.fasta\n' >> /app/run.sh && \
     printf 'echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
