@@ -96,8 +96,8 @@ watch_jobs() {
   local RUNNING INSTANCE JOB TYPE STATUS
   RUNNING="true"
   while [ "$RUNNING" = "true" ]; do
-    grep -v "^\s*#" $INSTANCES_CONF | grep -v -e "^$" | grep -v available | while read -r INSTANCE; do
-      JOB=$(printf "$INSTANCE" | cut -f2 | cut -d: -f2)
+    for INSTANCE in $(grep -v "^\s*#" $INSTANCES_CONF | grep -v -e "^$" | grep -v available | cut -f1); do
+      JOB=$(grep $INSTANCE  $INSTANCES_CONF | cut -f2 | cut -d: -f2)
       TYPE=$(grep $JOB $JOBS_CONF | cut -f1)
       # Get the status of the job.
       STATUS=$(job_status $JOB)
