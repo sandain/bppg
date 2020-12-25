@@ -105,11 +105,11 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'echo "Transferring results to GDrive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:archive\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'cp output/report.txt $NAME.report.txt\n' >> /app/run.sh && \
-    printf 'rclone --config=%s copy $NAME.report.txt genome-assembly:\n' >> /app/run.sh && \
-    printf 'perl -MBio::SeqIO -e '"'"'$in=Bio::SeqIO->new(-file=>"<output/scaffolds.fasta",-format=>"fasta");$out=Bio::SeqIO->new(-file=>">$NAME.filtered.fasta",-format=>"fasta");while($seq=$in->next_seq){$out->write_seq($seq)if(length $seq->seq>=500);}$in->close;$out->close;'"'"'\n' >> /app/run.sh && \
-    printf 'rclone --config=%s copy $NAME.filtered.fasta genome-assembly:\n' >> /app/run.sh && \
+    printf 'rclone --config=%s copy $NAME.report.txt genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'perl -MBio::SeqIO -se '"'"'$in=Bio::SeqIO->new(-file=>"<output/scaffolds.fasta",-format=>"fasta");$out=Bio::SeqIO->new(-file=>">$NAME.filtered.fasta",-format=>"fasta");while($seq=$in->next_seq){$out->write_seq($seq)if(length $seq->seq>=500);}$in->close;$out->close;'"'"' -- -NAME=$NAME\n' >> /app/run.sh && \
+    printf 'rclone --config=%s copy $NAME.filtered.fasta genome-assembly:\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'echo "Done" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
-    printf 'rm -Rf output $NAME.tar.gz $R1 $R2 rclone.conf\n' >> /app/run.sh && \
+    printf 'rm -Rf output $NAME.tar.gz $NAME.report.txt $NAME.filtered.fasta $R1 $R2 rclone.conf\n' >> /app/run.sh && \
     chmod 755 /app/run.sh
 
 # Run the script on entry.
