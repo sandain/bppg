@@ -133,7 +133,13 @@ case "$COMMAND" in
   ;;
   instance)
     # Verify command line arguments.
-
+    if [ "$2" = "" ]; then
+      printf "Error: IP address of instance not provided.\n"
+      usage
+      exit 1
+    fi
+    # Mark the instance as available.
+    printf "%s\tavailable\n" $2 >> $INSTANCES_CONF
   ;;
   start)
     # Insure required configuration files exist.
