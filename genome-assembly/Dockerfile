@@ -102,7 +102,7 @@ RUN printf '#!/bin/sh\n' > /app/run.sh && \
     printf 'quast.py --glimmer -o output output/scaffolds.fasta\n' >> /app/run.sh && \
     printf 'echo "Creating archive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'tar -zcvf $NAME.tar.gz -C output .\n' >> /app/run.sh && \
-    printf 'echo "Transfering results to GDrive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
+    printf 'echo "Transferring results to GDrive" | rclone --config=%s rcat genome-assembly:$NAME.status\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.tar.gz genome-assembly:archive\n' ${RCLONE_CONF} >> /app/run.sh && \
     printf 'cp output/report.txt $NAME.report.txt\n' >> /app/run.sh && \
     printf 'rclone --config=%s copy $NAME.report.txt genome-assembly:\n' >> /app/run.sh && \
