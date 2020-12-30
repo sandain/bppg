@@ -49,7 +49,7 @@ genome_assembly() {
   # Upload the files to the instance.
   upload_files $INSTANCE $R1 $R2 $RCLONE_CONF
   # Run the bppg/genome-assembly pipeline.
-  ssh -T -i $JPL_PEM ubuntu@$INSTANCE "cd /data && docker run -d -v \`pwd\`:\`pwd\` -w \`pwd\` bppg/genome-assembly:latest $NAME $R1_BASENAME $R2_BASENAME"
+  ssh -T -i $JPL_PEM -o StrictHostKeyChecking=no ubuntu@$INSTANCE "cd /data && docker run -d -v \`pwd\`:\`pwd\` -w \`pwd\` bppg/genome-assembly:latest $NAME $R1_BASENAME $R2_BASENAME"
 }
 
 # ---------------------------------------------------------------------------
@@ -86,7 +86,7 @@ upload_files() {
   # End the FTP session.
   FTP_SCRIPT=$(printf "$FTP_SCRIPT\nexit\n")
   # Run the FTP script.
-  printf "$FTP_SCRIPT" | sftp -i $JPL_PEM ubuntu@$INSTANCE
+  printf "$FTP_SCRIPT" | sftp -i $JPL_PEM -o StrictHostKeyChecking=no ubuntu@$INSTANCE
 }
 
 # ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ watch_jobs() {
     # Shutdown instances and end the watch_jobs process if there are no more jobs.
     if [ $(grep -v "^\s*#" $JOBS_CONF | grep -v -e "^$" | wc -l) -eq 0 ]; then
       for INSTANCE in $(grep -v "^\s*#" $INSTANCES_CONF | cut -f1); do
-        ssh -T -i $JPL_PEM ubuntu@$INSTANCE "sudo shutdown now"
+        ssh -T -i $JPL_PEM -o StrictHostKeyChecking=no ubuntu@$INSTANCE "sudo shutdown now"
         perl -i -ne "print unless (/$INSTANCE/);" $INSTANCES_CONF
       done
       RUNNING="false"
