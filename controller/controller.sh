@@ -93,7 +93,7 @@ upload_files() {
 # Watch for finished jobs.
 # ---------------------------------------------------------------------------
 watch_jobs() {
-  local RUNNING INSTANCE JOB TYPE STATUS
+  local RUNNING INSTANCE JOB TYPE STATUS QUAST
   RUNNING="true"
   while [ "$RUNNING" = "true" ]; do
     for INSTANCE in $(grep -v "^\s*#" $INSTANCES_CONF | grep -v -e "^$" | grep -v available | cut -f1); do
@@ -108,6 +108,21 @@ watch_jobs() {
         perl -i -pe "s/job:$JOB/available/" $INSTANCES_CONF
         # Remove the job status from Google Drive.
         rclone --config=$RCLONE_CONF delete $TYPE:$JOB.status
+        if [ "$TYPE" = "genome-assembly" ]; then
+          # Add assembly stats to the results.txt file.
+          QUAST=$(rclone --config=$RCLONE_CONF cat $TYPE:$JOB.report.txt)
+          printf "%s\n%s\t%s\t%s\t%s\t%s\t%s\n" \
+            "$(rclone --config=$RCLONE_CONF cat $TYPE:results.txt)" \
+            "$JOB" \
+            $(printf "%s" "$QUAST" | grep '# contigs  ' | tr -s ' ' | cut -d ' ' -f 3) \
+            $(printf "%s" "$QUAST" | grep 'Total length  ' | tr -s ' ' | cut -d ' ' -f 3) \
+            $(printf "%s" "$QUAST" | grep 'Largest contig' | tr -s ' ' | cut -d ' ' -f 3) \
+            $(printf "%s" "$QUAST" | grep 'GC (%)' | tr -s " " | cut -d ' ' -f 3) \
+            $(printf "%s" "$QUAST" | grep 'N50' | tr -s " " | cut -d ' ' -f 2) | \
+            rclone --config=$RCLONE_CONF rcat $TYPE:results.txt
+            # Remove the job report from Google Drive.
+            rclone --config=$RCLONE_CONF delete $TYPE:$JOB.report.txt
+        fi
       fi
     done
     sleep 30
