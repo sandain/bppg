@@ -144,7 +144,21 @@ COMMAND=$1
 case "$COMMAND" in
   enqueue)
     # Verify command line arguments.
-
+    if [ "$2" = "" ] || [ "$2" != "genome-assembly" ]; then
+      printf "Error: Job type not provided or invalid.\n"
+      usage
+      exit 1
+    fi
+    if [ "$3" = "" ]; then
+      printf "Error: Job name not provided.\n"
+      usage
+      exit 1
+    fi
+    TYPE="$2"
+    NAME="$3"
+    shift 3
+    FILES="$@"
+    printf "%s\t%s%s\n" $TYPE $NAME "$(printf '\t%s' $FILES)" >> $JOBS_CONF
   ;;
   instance)
     # Verify command line arguments.
