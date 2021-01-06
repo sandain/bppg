@@ -137,6 +137,15 @@ watch_jobs() {
   done
 }
 
+# Ensure job and instance configuration files exist.
+# ---------------------------------------------------------------------------
+if [ ! -s $JOBS_CONF ] || [ ! -r $JOBS_CONF ]; then
+  printf "#Pipeline\tName\tArgument 1\tArgument 2\n" > $JOBS_CONF
+fi
+if [ ! -s $INSTANCES_CONF ] || [ ! -r $INSTANCES_CONF ]; then
+  printf "#Instance\tStatus\n" > $INSTANCES_CONF
+fi
+
 # Respond to the command line arguments.
 # ---------------------------------------------------------------------------
 COMMAND=$1
@@ -171,7 +180,7 @@ case "$COMMAND" in
     printf "%s\tavailable\n" $2 >> $INSTANCES_CONF
   ;;
   start)
-    # Insure required configuration files exist.
+    # Ensure required configuration files exist.
     if [ ! -s $JPL_PEM ] || [ ! -r $JPL_PEM ]; then
       printf "Error: Unable to find a valid RSA private key to connect to AWS.\n"
       printf "This file should be saved to $JPL_PEM, see the README.md for more information\n"
