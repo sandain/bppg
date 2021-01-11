@@ -90,6 +90,46 @@ upload_files() {
 }
 
 # ---------------------------------------------------------------------------
+# Submit jobs to available instances.
+# ---------------------------------------------------------------------------
+submit_jobs() {
+  local RUNNING JOBS JOB TYPE ARGS JOB_RUNNING INSTANCE
+  RUNNING="true"
+  while [ "$RUNNING" = "true" ]; do
+    # Read in the jobs.conf file, ignoring comments.
+    JOBS=$(grep -v "^\s*#" $JOBS_CONF | grep -v -e "^$" | cut -f2)
+    for JOB in $JOBS; do
+      # Look for the type of job and the arguments for that job.
+      TYPE=$(grep "$JOB" $JOBS_CONF | cut -f1)
+      ARGS=$(grep "$JOB" $JOBS_CONF | cut -f1 --complement)
+      # Make sure this job is not already running.
+      JOB_RUNNING=$(grep $JOB $INSTANCES_CONF)
+      if [ -n "$JOB_RUNNING" ]; then
+        continue
+      fi
+      # Find an instance accepting jobs, or wait for one to become available.
+      INSTANCE=""
+      while [ "$INSTANCE" = "" ]; do
+        INSTANCE=$(grep -v "^\s*#" $INSTANCES_CONF | grep -m1 available | cut -f1)
+        if [ "$INSTANCE" = "" ]; then
+          sleep 10
+        fi
+      done
+      # Start the job.
+      if [ "$TYPE" = "genome-assembly" ]; then
+        printf "Starting genome assembly $JOB on instance $INSTANCE.\n"
+        genome_assembly $INSTANCE $ARGS
+      fi
+      # Mark the instance as busy with a job.
+      perl -i -pe "s/$INSTANCE\tavailable/$INSTANCE\tjob:$JOB/" $INSTANCES_CONF
+    done
+    if [ $(grep -v "^\s*#" $JOBS_CONF | grep -v -e "^$" | wc -l) -eq 0 ]; then
+      RUNNING="false"
+    fi
+  done
+}
+
+# ---------------------------------------------------------------------------
 # Watch for finished jobs.
 # ---------------------------------------------------------------------------
 watch_jobs() {
@@ -195,33 +235,8 @@ case "$COMMAND" in
     fi
     # Start a process to watch for finished jobs.
     watch_jobs &
-    # Read in the jobs.conf file, ignoring comments.
-    JOBS=$(grep -v "^\s*#" $JOBS_CONF | grep -v -e "^$" | cut -f2)
-    for JOB in $JOBS; do
-      # Look for the type of job and the arguments for that job.
-      TYPE=$(grep "$JOB" $JOBS_CONF | cut -f1)
-      ARGS=$(grep "$JOB" $JOBS_CONF | cut -f1 --complement)
-      # Make sure this job is not already running.
-      JOB_RUNNING=$(grep $JOB $INSTANCES_CONF)
-      if [ -n "$JOB_RUNNING" ]; then
-        continue
-      fi
-      # Find an instance accepting jobs, or wait for one to become available.
-      INSTANCE=""
-      while [ "$INSTANCE" = "" ]; do
-        INSTANCE=$(grep -v "^\s*#" $INSTANCES_CONF | grep -m1 available | cut -f1)
-        if [ "$INSTANCE" = "" ]; then
-          sleep 10
-        fi
-      done
-      # Start the job.
-      if [ "$TYPE" = "genome-assembly" ]; then
-        printf "Starting genome assembly $JOB on instance $INSTANCE.\n"
-        genome_assembly $INSTANCE $ARGS
-      fi
-      # Mark the instance as busy with a job.
-      perl -i -pe "s/$INSTANCE\tavailable/$INSTANCE\tjob:$JOB/" $INSTANCES_CONF
-    done
+    # Start a process to submit jobs to available instances.
+    submit_jobs &
   ;;
   status)
     INSTANCES=$(grep -v "^\s*#" $INSTANCES_CONF | grep -v -e "^$" | cut -f1)
