@@ -2,8 +2,8 @@
 
 PROG=$0
 
-INSTANCES_CONF=/opt/bppg/controller/instances.conf
-JOBS_CONF=/opt/bppg/controller/jobs.conf
+INSTANCES_CONF=~/.config/bppg/instances.conf
+JOBS_CONF=~/.config/bppg/jobs.conf
 
 JPL_PEM=~/.ssh/jpl.pem
 RCLONE_CONF=~/.config/rclone/rclone.conf
