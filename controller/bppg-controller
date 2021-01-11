@@ -2,8 +2,8 @@
 
 PROG=$0
 
-INSTANCES_CONF=instances.conf
-JOBS_CONF=jobs.conf
+INSTANCES_CONF=/opt/bppg/controller/instances.conf
+JOBS_CONF=/opt/bppg/controller/jobs.conf
 
 JPL_PEM=~/.ssh/jpl.pem
 RCLONE_CONF=~/.config/rclone/rclone.conf
@@ -179,6 +179,7 @@ watch_jobs() {
 
 # Ensure job and instance configuration files exist.
 # ---------------------------------------------------------------------------
+mkdir -p $(dirname $JOBS_CONF)
 if [ ! -s $JOBS_CONF ] || [ ! -r $JOBS_CONF ]; then
   printf "#Pipeline\tName\tArgument 1\tArgument 2\n" > $JOBS_CONF
 fi
