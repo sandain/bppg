@@ -30,9 +30,11 @@ WORKDIR /app
 
 # Create the script.
 RUN printf '#!/usr/bin/env perl\n' > /app/hello-world && \
-    printf 'printf "Hello %%s!\\n", $ARGV[0] if (@ARGV > 0);\n' >> /app/hello-world && \
-    printf 'printf "Hello World!\\n" if (@ARGV == 0);\n' >> /app/hello-world && \
+    printf 'printf "Hello %%s!\\n", $ARGV[0]\n' >> /app/hello-world && \
     chmod 755 /app/hello-world
-    
-# Run the script on entry.
+
+# Set the entry point for the script.
 ENTRYPOINT ["/app/hello-world"]
+
+# Set the default command line option.
+CMD ["World"]
