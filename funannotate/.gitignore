@@ -1,0 +1,6 @@
+# Ignore GeneMark files as they require a license.
+gmes_linux_64.tar.gz
+gm_key_64
+
+# Ignore the SignalP file as it requires a license.
+signalp-4.1g.Linux.tar.gz
